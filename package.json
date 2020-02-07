@@ -1,0 +1,65 @@
+{
+  "name": "cypress-circleci-reporter",
+  "version": "0.1.0",
+  "author": "Kamil Socha <https://github.com/ksocha>",
+  "description": "Cypress test reporter for CircleCI",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ksocha/cypress-circleci-reporter.git"
+  },
+  "keywords": [
+    "circleci",
+    "reporter",
+    "cypress"
+  ],
+  "bugs": {
+    "url": "https://github.com/ksocha/cypress-circleci-reporter/issues"
+  },
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "module": "dist/cypress-circleci-reporter.esm.js",
+  "devDependencies": {
+    "@types/jest": "^25.1.1",
+    "@types/md5": "^2.1.33",
+    "@types/mkdirp": "^0.5.2",
+    "@types/mocha": "^7.0.1",
+    "@types/xml": "^1.0.4",
+    "husky": "^4.2.1",
+    "mocha": "^7.0.1",
+    "tsdx": "^0.12.3",
+    "tslib": "^1.10.0",
+    "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "md5": "^2.2.1",
+    "mkdirp": "^1.0.3",
+    "strip-ansi": "^6.0.0",
+    "xml": "^1.0.1",
+    "xmlbuilder": "^13.0.2"
+  },
+  "peerDependencies": {
+    "mocha": ">=7.0.0"
+  }
+}

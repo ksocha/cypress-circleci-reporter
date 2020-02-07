@@ -1,0 +1,26 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:12
+    working_directory: ~/app
+    parallelism: 1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-deps-{{ .Branch }}
+            - v1-deps
+      - run: yarn install --frozen-lockfile
+      - save_cache:
+          key: v1-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache
+      - run:
+          name: Running linter
+          command: yarn lint
+      - run:
+          name: Running unit tests
+          command: yarn test
