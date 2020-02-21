@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/node:12
+      - image: cypress/base:12
     working_directory: ~/app
     parallelism: 1
     steps:
@@ -24,3 +24,14 @@ jobs:
       - run:
           name: Running unit tests
           command: yarn test
+      - run:
+          name: Build app
+          command: yarn build
+      - run:
+          name: Run cypress tests
+          command: |
+            yarn cypress run --reporter "./dist/index.js" --spec "$(circleci tests glob "./cypress/integration/**/*.spec.ts" | circleci tests split --split-by=timings | paste -sd "," -)"
+      - store_test_results:
+          path: test_results
+      - store_artifacts:
+          path: test_results
