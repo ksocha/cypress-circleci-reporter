@@ -1,13 +1,26 @@
 version: 2.1
 
-jobs:
-  build:
+executors:
+  node:
+    working_directory: ~/app
     docker:
       - image: cypress/base:12.16.0
-    working_directory: ~/app
-    parallelism: 1
+
+jobs:
+  checkout_code:
+    executor: node
     steps:
       - checkout
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - app
+
+  install_dependencies:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: ~/
       - restore_cache:
           keys:
             - v1-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
@@ -18,12 +31,36 @@ jobs:
           key: v1-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - .cache
+            - repo/node_modules
+
+  run_linter:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: ~/
       - run:
-          name: Running linter
+          name: Run linter
           command: yarn lint
+
+  run_unit_tests:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: ~/
       - run:
-          name: Running unit tests
+          name: Run unit tests
           command: yarn test
+
+  run_cypress_tests:
+    executor: node
+    parallelism: 3
+    steps:
+      - attach_workspace:
+          at: ~/
       - run:
           name: Build app
           command: yarn build
@@ -35,3 +72,21 @@ jobs:
           path: test_results
       - store_artifacts:
           path: test_results
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - checkout_code:
+      - install_dependencies:
+          requires:
+            - checkout_code
+      - run_linter:
+          requires:
+            - install_dependencies
+      - run_unit_tests:
+          requires:
+            - run_linter
+      - run_cypress_tests:
+          requires:
+            - run_unit_tests
