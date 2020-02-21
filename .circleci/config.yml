@@ -35,7 +35,7 @@ jobs:
           root: ~/
           paths:
             - .cache
-            - repo/node_modules
+            - app/node_modules
 
   run_linter:
     executor: node
