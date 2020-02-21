@@ -4,6 +4,10 @@ executors:
   node:
     working_directory: ~/app
     docker:
+      - image: circleci/node:12.16
+  node_cypress:
+    working_directory: ~/app
+    docker:
       - image: cypress/base:12.16.0
 
 jobs:
@@ -56,7 +60,7 @@ jobs:
           command: yarn test
 
   run_cypress_tests:
-    executor: node
+    executor: node_cypress
     parallelism: 3
     steps:
       - attach_workspace:
@@ -67,7 +71,7 @@ jobs:
       - run:
           name: Run cypress tests
           command: |
-            yarn cypress run --reporter "./dist/index.js" --spec "$(circleci tests glob "./cypress/integration/**/*.spec.ts" | circleci tests split --split-by=timings | paste -sd "," -)"
+            yarn cypress run --reporter "./dist/index.js" --spec "$(circleci tests glob "./cypress/integration/**/*.spec.js" | circleci tests split --split-by=timings | paste -sd "," -)"
       - store_test_results:
           path: test_results
       - store_artifacts:
