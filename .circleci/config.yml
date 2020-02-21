@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cypress/base:12
+      - image: cypress/base:12.16.0
     working_directory: ~/app
     parallelism: 1
     steps:
