@@ -23,11 +23,6 @@ export default class RunnerMock extends Runner {
     suite.suites = suite.suites || [];
     suite.tests = suite.tests || [];
 
-    // if (this._currentSuite) {
-    //   suite.parent = this._currentSuite;
-    // }
-
-    // this._currentSuite = suite;
     this.emit(EVENT_SUITE_BEGIN, suite);
   };
 
