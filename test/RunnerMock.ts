@@ -11,10 +11,6 @@ const {
 } = Runner.constants;
 
 export default class RunnerMock extends Runner {
-  constructor(suite: Suite, delay: boolean) {
-    super(suite, delay);
-  }
-
   start = () => {
     this.emit(EVENT_RUN_BEGIN);
   };

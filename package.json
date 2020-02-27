@@ -12,7 +12,8 @@
     "circleci",
     "reporter",
     "cypress",
-    "parallelization"
+    "parallelization",
+    "testing"
   ],
   "bugs": {
     "url": "https://github.com/ksocha/cypress-circleci-reporter/issues"
@@ -27,7 +28,7 @@
     "build": "tsdx build --target node",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepare": "tsdx build",
+    "prepare": "tsdx build --target node",
     "cypress": "cypress"
   },
   "husky": {

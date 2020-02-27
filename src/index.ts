@@ -1,6 +1,3 @@
-// https://github.com/windyroad/JUnit-Schema/blob/master/JUnit.xsd#L14
-// http://windyroad.org/dl/Open%20Source/JUnit.xsd
-// https://github.com/sj26/rspec_junit_formatter/blob/master/lib/rspec_junit_formatter.rb
 import { create } from 'xmlbuilder2';
 import Mocha, { Runner, Suite, Test, MochaOptions } from 'mocha';
 import createStatsCollector from 'mocha/lib/stats-collector';
