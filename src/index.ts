@@ -40,7 +40,7 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
     super(runner, options);
 
     createStatsCollector(runner);
-    const projectPath: string = options?.reporterOptions?.project || '';
+    const projectPath: string | undefined = options?.reporterOptions?.project;
     const resultsDir: string =
       options?.reporterOptions?.resultsDir || './test_results/cypress';
     const resultFileName: string =
@@ -62,7 +62,7 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
 
     runner.on(EVENT_SUITE_BEGIN, (suite: Suite) => {
       if (suite.file) {
-        this.file = path.join(projectPath, suite.file);
+        this.file = path.join(projectPath || '', suite.file);
       }
     });
 
