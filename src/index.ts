@@ -43,8 +43,17 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
     super(runner, options);
 
     createStatsCollector(runner);
-    const resultFile = './test_results/cypress/cypress-[hash].xml';
     const projectPath: string = options?.reporterOptions?.project || '';
+    const resultsDir: string =
+      options?.reporterOptions?.resultsDir || './test_results/cypress';
+    const resultFileName: string =
+      options?.reporterOptions?.resultFileName || 'cypress-[hash]';
+
+    if (resultFileName.indexOf('[hash]') < 0) {
+      throw new Error(`resultFileName must contain '[hash]'`);
+    }
+
+    const resultFilePath = path.join(resultsDir, `${resultFileName}.xml`);
 
     const root = create({ version: '1.0', encoding: 'UTF-8' }).ele(
       'testsuite',
@@ -91,7 +100,7 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
 
       const xmlText = root.end({ prettyPrint: true }).toString();
 
-      const finalPath = resultFile.replace(
+      const finalPath = resultFilePath.replace(
         '[hash]',
         crypto
           .createHash('md5')

@@ -156,4 +156,20 @@ describe('reporter', () => {
 
     expect(actualXML).toEqualXML(expectedXML);
   });
+
+  it(`throws error if 'resultFileName' does not contain '[hash]'`, () => {
+    const suite = new Suite('root');
+    suite.root = true;
+    suite.file = 'path/to/file.spec.ts';
+
+    const runnerMock = new RunnerMock(suite, false);
+
+    expect(() => {
+      new CypressCircleCIReporter(runnerMock, {
+        reporterOptions: {
+          resultFileName: 'cypress',
+        },
+      });
+    }).toThrow();
+  });
 });
