@@ -28,20 +28,20 @@ export default class RunnerMock extends Runner {
 
   pass = (test: Test) => {
     this.emit(EVENT_TEST_PASS, test);
-    this.endTest();
+    this.endTest(test);
   };
 
   fail = (test: Test, reason: any) => {
     this.emit(EVENT_TEST_FAIL, test, reason);
-    this.endTest();
+    this.endTest(test);
   };
 
   pending = (test: Test) => {
     this.emit(EVENT_TEST_PENDING, test);
-    this.endTest();
+    this.endTest(test);
   };
 
-  endTest = () => {
-    this.emit(EVENT_TEST_END);
+  endTest = (test: Test) => {
+    this.emit(EVENT_TEST_END, test);
   };
 }
