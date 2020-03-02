@@ -1,2 +1,47 @@
 # cypress-circleci-reporter
-Cypress test reporter for CircleCI
+
+Cypress test reporter for CircleCI based on [mocha-junit-reporter](https://github.com/michaelleeallen/mocha-junit-reporter). Helps with test parallelization.
+
+## Installation
+
+```shell
+$ npm install cypress-circleci-reporter --save-dev
+```
+
+```shell
+$ yarn add cypress-circleci-reporter --dev
+```
+
+## Usage
+
+After installing the reporter, you'll need to modify your config to use it:
+
+### CircleCI config example
+
+```
+run_cypress_tests:
+  parallelism: 3        # or any other number that suits your needs
+  steps:
+    # some previous steps
+
+    - run:
+        name: Run cypress tests
+        command: yarn cypress run --spec "$(circleci tests glob "./cypress/integration/**/*.spec.js" | circleci tests split --split-by=timings | paste -sd "," -)" --reporter cypress-circleci-reporter
+
+    - store_test_results:
+        path: test_results
+    - store_artifacts:
+        path: test_results
+```
+
+First test run with this config should create and store reports for each test file. These will be used during next runs to determine timings of each test. CircleCI will then split the test files between available containers to speed up the process.
+
+### Configuration options
+
+Options can be passed to the reported by adding `--reporter-options` parameter to the CLI command.
+
+| Parameter      | Default                  | Effect                                                                                                                                                                          |
+| -------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| project        | `undefined`              | If you use Cypress' `project` parameter, this should be set to the same value.                                                                                                  |
+| resultsDir     | `./test_results/cypress` | Name of the directory that reports will be saved into. report                                                                                                                   |
+| resultFileName | `cypress-[hash]`         | Name of the file that will be created for each test run. Must include `[hash]` string as each spec file is processed completely separately during each `cypress run` execution. |
