@@ -1,5 +1,9 @@
 # cypress-circleci-reporter
 
+![CircleCI](https://img.shields.io/circleci/build/github/ksocha/cypress-circleci-reporter?style=flat-square)
+![npm](https://img.shields.io/npm/v/cypress-circleci-reporter?style=flat-square)
+![GitHub](https://img.shields.io/github/license/ksocha/cypress-circleci-reporter?style=flat-square)
+
 Cypress test reporter for CircleCI based on [mocha-junit-reporter](https://github.com/michaelleeallen/mocha-junit-reporter). Helps with test parallelization.
 
 ## Installation
