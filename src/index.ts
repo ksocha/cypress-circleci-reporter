@@ -39,6 +39,8 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
   constructor(runner: Runner, options?: MochaOptions) {
     super(runner, options);
 
+    console.log(process.env);
+
     createStatsCollector(runner);
     const projectPath: string | undefined = options?.reporterOptions?.project;
     const resultsDir: string =
