@@ -39,10 +39,6 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
   constructor(runner: Runner, options?: MochaOptions) {
     super(runner, options);
 
-    console.log(process.env);
-    console.log('====================');
-    console.log('Cypress', (global as any).Cypress);
-
     createStatsCollector(runner);
     const projectPath: string | undefined = options?.reporterOptions?.project;
     const resultsDir: string =
@@ -65,6 +61,11 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
     );
 
     runner.on(EVENT_SUITE_BEGIN, (suite: Suite) => {
+      console.log(process.env);
+      console.log('====================');
+      console.log('Cypress', (global as any).Cypress);
+      console.log('cy', (global as any).cy);
+
       if (suite.file) {
         this.file = path.join(projectPath || '', suite.file);
       }
