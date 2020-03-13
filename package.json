@@ -1,7 +1,7 @@
 {
   "name": "cypress-circleci-reporter",
   "version": "0.1.1",
-  "author": "Kamil Socha <https://github.com/ksocha>",
+  "author": "Kamil Socha (https://github.com/ksocha)",
   "description": "Cypress test reporter for CircleCI",
   "license": "MIT",
   "repository": {
