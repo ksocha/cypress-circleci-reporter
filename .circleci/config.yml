@@ -85,12 +85,12 @@ workflows:
       - install_dependencies:
           requires:
             - checkout_code
-      - run_linter:
+      # - run_linter:
+      #     requires:
+      #       - install_dependencies
+      # - run_unit_tests:
+      #     requires:
+      #       - run_linter
+      - run_cypress_tests:
           requires:
             - install_dependencies
-      - run_unit_tests:
-          requires:
-            - run_linter
-      # - run_cypress_tests:
-      #     requires:
-      #       - run_unit_tests
