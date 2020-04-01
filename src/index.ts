@@ -105,7 +105,11 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
           .digest('hex')
       );
 
-      fs.mkdirSync(path.dirname(finalPath), { recursive: true });
+      const finalPathDir = path.dirname(finalPath);
+
+      if (!fs.existsSync(finalPathDir)) {
+        fs.mkdirSync(finalPathDir, { recursive: true });
+      }
       fs.writeFileSync(finalPath, xmlText, 'utf-8');
     });
   }
