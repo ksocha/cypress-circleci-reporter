@@ -44,8 +44,10 @@ First test run with this config should create and store reports for each test fi
 
 Options can be passed to the reported by adding `--reporter-options` parameter to the CLI command.
 
+Example: `--reporter cypress-circleci-reporter --reporter-options "resultsDir=./results/cypress,resultFileName=result-[hash]"`
+
 | Parameter      | Default                  | Effect                                                                                                                                                                          |
 | -------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | project        | `undefined`              | If you use Cypress' `project` parameter, this should be set to the same value.                                                                                                  |
-| resultsDir     | `./test_results/cypress` | Name of the directory that reports will be saved into. report                                                                                                                   |
+| resultsDir     | `./test_results/cypress` | Name of the directory that reports will be saved into.                                                                                                                          |
 | resultFileName | `cypress-[hash]`         | Name of the file that will be created for each test run. Must include `[hash]` string as each spec file is processed completely separately during each `cypress run` execution. |
