@@ -6,6 +6,10 @@
 
 Cypress test reporter for CircleCI based on [mocha-junit-reporter](https://github.com/michaelleeallen/mocha-junit-reporter). Helps with test parallelization.
 
+## Requirements
+
+- Cypress 3.8.3 or newer
+
 ## Installation
 
 ```shell
