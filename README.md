@@ -13,11 +13,11 @@ Cypress test reporter for CircleCI based on [mocha-junit-reporter](https://githu
 ## Installation
 
 ```shell
-$ npm install cypress-circleci-reporter --save-dev
+$ npm install cypress-circleci-reporter mocha --save-dev
 ```
 
 ```shell
-$ yarn add cypress-circleci-reporter --dev
+$ yarn add cypress-circleci-reporter mocha --dev
 ```
 
 ## Usage
