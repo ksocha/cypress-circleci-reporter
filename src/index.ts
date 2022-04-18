@@ -80,8 +80,12 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
 
       const failureMessage = err.stack || message;
 
+      let testcaseAttributes = {
+        ...this.getTestcaseAttributes(test),
+        line_number: JSON.parse(test.inspect()).invocationDetails.line,
+      };
       root
-        .ele('testcase', this.getTestcaseAttributes(test))
+        .ele('testcase', testcaseAttributes)
         .ele('failure', {
           message: removeInvalidCharacters(message) || '',
           type: err.name || '',
