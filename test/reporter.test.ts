@@ -16,7 +16,10 @@ function formatDate(date: Date) {
 
 describe('reporter', () => {
   beforeEach(() => {
-    fs.rmdirSync(`./test_results/cypress`, { recursive: true });
+    const directory = `./test_results/cypress`;
+    if (fs.existsSync(directory)) {
+      fs.rmdirSync(directory, { recursive: true });
+    }
   });
 
   it('creates proper xml for test run', () => {
@@ -82,6 +85,7 @@ describe('reporter', () => {
     const test1DurationFormatted = formatDuration(test1.duration);
     const test2DurationFormatted = formatDuration(test2.duration);
     const test3DurationFormatted = formatDuration(test3.duration);
+    const test4DurationFormatted = formatDuration(test4.duration);
     const test5DurationFormatted = formatDuration(test5.duration);
 
     const files = fs.readdirSync('./test_results/cypress');
@@ -103,6 +107,7 @@ describe('reporter', () => {
             <![CDATA[some test stack]]>
           </failure>
         </testcase>
+        <testcase name="${test4.title}" file="${testFile}" time="${test4DurationFormatted}" classname="root"/>
         <testcase name="${test5.title}" file="${testFile}" time="${test5DurationFormatted}" classname="root.nested"/>
       </testsuite>`;
 
