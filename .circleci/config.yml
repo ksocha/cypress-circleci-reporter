@@ -4,11 +4,11 @@ executors:
   node:
     working_directory: ~/app
     docker:
-      - image: circleci/node:12.16
+      - image: cimg/node:22.11.0
   node_cypress:
     working_directory: ~/app
     docker:
-      - image: cypress/base:12.16.0
+      - image: cypress/base:22.11.0
 
 jobs:
   checkout_code:
