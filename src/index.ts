@@ -10,6 +10,7 @@ const {
   EVENT_RUN_END,
   EVENT_TEST_FAIL,
   EVENT_TEST_PASS,
+  EVENT_TEST_PENDING,
   EVENT_SUITE_BEGIN,
 } = Runner.constants;
 
@@ -87,6 +88,10 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
           type: err.name || '',
         })
         .ele({ $: removeInvalidCharacters(failureMessage) });
+    });
+
+    runner.on(EVENT_TEST_PENDING, (test: Test) => {
+      root.ele('testcase', this.getTestcaseAttributes(test));
     });
 
     runner.on(EVENT_RUN_END, () => {
