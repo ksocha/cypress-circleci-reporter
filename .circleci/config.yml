@@ -39,6 +39,9 @@ jobs:
     parallelism: 3
     steps:
       - checkout
+      - run:
+          name: Enable pnpm
+          command: corepack enable pnpm
       - node/install-packages:
           pkg-manager: pnpm
       - run:
