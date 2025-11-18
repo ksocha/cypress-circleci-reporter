@@ -1,5 +1,5 @@
 import { create } from "xmlbuilder2";
-import Mocha, { Runner, Suite, Test, type MochaOptions } from "mocha";
+import Mocha, { Runner, Test, type MochaOptions } from "mocha";
 import createStatsCollector from "mocha/lib/stats-collector";
 import fs from "fs";
 import path from "path";
@@ -17,7 +17,7 @@ const {
 // A subset of invalid characters as defined in http://www.w3.org/TR/xml/#charsets that can occur in e.g. stacktraces
 // regex lifted from https://github.com/MylesBorins/xml-sanitizer/ (licensed MIT)
 const INVALID_CHARACTERS_REGEX =
-  /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007f-\u0084\u0086-\u009f\uD800-\uDFFF\uFDD0-\uFDFF\uFFFF\uC008]/g; // eslint-disable-line no-control-regex, max-len
+  /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007f-\u0084\u0086-\u009f\uD800-\uDFFF\uFDD0-\uFDFF\uFFFF\uC008]/g; // eslint-disable-line no-control-regex
 
 function removeInvalidCharacters(input: string) {
   return input ? input.replace(INVALID_CHARACTERS_REGEX, "") : input;
@@ -62,17 +62,17 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
       },
     );
 
-    runner.on(EVENT_SUITE_BEGIN, (suite: Suite) => {
+    runner.on(EVENT_SUITE_BEGIN, (suite) => {
       if (suite.file) {
         this.file = path.join(projectPath || "", suite.file);
       }
     });
 
-    runner.on(EVENT_TEST_PASS, (test: Test) => {
+    runner.on(EVENT_TEST_PASS, (test) => {
       root.ele("testcase", this.getTestcaseAttributes(test));
     });
 
-    runner.on(EVENT_TEST_FAIL, (test: Test, err: any) => {
+    runner.on(EVENT_TEST_FAIL, (test, err) => {
       let message = "";
       if (err.message && typeof err.message.toString === "function") {
         message = String(err.message);
@@ -91,7 +91,7 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
         .ele({ $: removeInvalidCharacters(failureMessage) });
     });
 
-    runner.on(EVENT_TEST_PENDING, (test: Test) => {
+    runner.on(EVENT_TEST_PENDING, (test) => {
       root.ele("testcase", this.getTestcaseAttributes(test));
     });
 
