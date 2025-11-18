@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  node: circleci/node@5.1.0
+
 executors:
   node:
     working_directory: ~/app
@@ -25,21 +28,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
-      - restore_cache:
-          keys:
-            - v2-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - v2-deps-{{ .Branch }}
-            - v2-deps
-      - run: yarn install --frozen-lockfile
-      - save_cache:
-          key: v2-deps-{{ .Branch }}-{{ checksum "yarn.lock" }}
-          paths:
-            - ~/.cache
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - .cache
-            - app/node_modules
+      - node/install-packages:
+          pkg-manager: yarn
 
   run_linter:
     executor: node
@@ -91,6 +81,6 @@ workflows:
       - run_unit_tests:
           requires:
             - run_linter
-      # - run_cypress_tests:
-      #     requires:
-      #       - run_unit_tests
+      - run_cypress_tests:
+          requires:
+            - run_unit_tests
