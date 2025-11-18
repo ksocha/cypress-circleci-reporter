@@ -1,3 +1,5 @@
 onlyBuiltDependencies:
   - cypress
   - esbuild
+
+sideEffectsCache: false

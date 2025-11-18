@@ -47,7 +47,7 @@
     "@types/mocha": "^8.2.3",
     "@types/node": "^24.10.1",
     "@types/xml": "^1.0.11",
-    "cypress": "^4.12.1",
+    "cypress": "^15.6.0",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^16.5.0",
