@@ -7,11 +7,11 @@ executors:
   node:
     working_directory: ~/app
     docker:
-      - image: cimg/node:22.11.0
+      - image: cimg/node:24.11.1
   node_cypress:
     working_directory: ~/app
     docker:
-      - image: cypress/base:22.11.0
+      - image: cypress/base:24.11.1
 
 jobs:
   checkout_code:
@@ -29,7 +29,7 @@ jobs:
       - attach_workspace:
           at: ~/
       - node/install-packages:
-          pkg-manager: yarn
+          pkg-manager: pnpm
 
   run_linter:
     executor: node
@@ -38,7 +38,7 @@ jobs:
           at: ~/
       - run:
           name: Run linter
-          command: yarn lint
+          command: pnpm lint
 
   run_unit_tests:
     executor: node
@@ -47,7 +47,7 @@ jobs:
           at: ~/
       - run:
           name: Run unit tests
-          command: yarn test
+          command: pnpm test
 
   run_cypress_tests:
     executor: node_cypress
@@ -57,11 +57,11 @@ jobs:
           at: ~/
       - run:
           name: Build app
-          command: yarn build
+          command: pnpm build
       - run:
           name: Run cypress tests
           command: |
-            yarn cypress run --reporter "./dist/index.js" --spec "$(circleci tests glob "./cypress/integration/**/*.spec.js" | circleci tests split --split-by=timings | paste -sd "," -)"
+            pnpm cypress run --reporter "./dist/index.js" --spec "$(circleci tests glob "./cypress/integration/**/*.spec.js" | circleci tests split --split-by=timings | paste -sd "," -)"
       - store_test_results:
           path: test_results
       - store_artifacts:
