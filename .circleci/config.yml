@@ -14,28 +14,12 @@ executors:
       - image: cypress/base:24.11.1
 
 jobs:
-  checkout_code:
-    executor: node
-    steps:
-      - checkout
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - app
-
-  install_dependencies:
-    executor: node
-    steps:
-      - attach_workspace:
-          at: ~/
-      - node/install-packages:
-          pkg-manager: pnpm
-
   run_linter:
     executor: node
     steps:
-      - attach_workspace:
-          at: ~/
+      - checkout
+      - node/install-packages:
+          pkg-manager: pnpm
       - run:
           name: Run linter
           command: pnpm lint
@@ -43,8 +27,9 @@ jobs:
   run_unit_tests:
     executor: node
     steps:
-      - attach_workspace:
-          at: ~/
+      - checkout
+      - node/install-packages:
+          pkg-manager: pnpm
       - run:
           name: Run unit tests
           command: pnpm test
@@ -53,8 +38,9 @@ jobs:
     executor: node_cypress
     parallelism: 3
     steps:
-      - attach_workspace:
-          at: ~/
+      - checkout
+      - node/install-packages:
+          pkg-manager: pnpm
       - run:
           name: Build app
           command: pnpm build
@@ -71,16 +57,6 @@ workflows:
   version: 2
   build:
     jobs:
-      - checkout_code
-      - install_dependencies:
-          requires:
-            - checkout_code
-      - run_linter:
-          requires:
-            - install_dependencies
-      - run_unit_tests:
-          requires:
-            - run_linter
-      - run_cypress_tests:
-          requires:
-            - run_unit_tests
+      - run_linter
+      - run_unit_tests
+      - run_cypress_tests
