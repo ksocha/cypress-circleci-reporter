@@ -1,4 +1,4 @@
-import { Runner, Suite, Test } from 'mocha';
+import { Runner, Suite, Test } from "mocha";
 
 const {
   EVENT_RUN_BEGIN,

@@ -3,10 +3,15 @@
   "version": "0.3.0",
   "author": "Kamil Socha (https://github.com/ksocha)",
   "description": "Cypress test reporter for CircleCI",
+  "type": "module",
   "license": "MIT",
+  "homepage": "https://github.com/author/library#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ksocha/cypress-circleci-reporter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ksocha/cypress-circleci-reporter/issues"
   },
   "keywords": [
     "circleci",
@@ -15,47 +20,33 @@
     "parallelization",
     "testing"
   ],
-  "bugs": {
-    "url": "https://github.com/ksocha/cypress-circleci-reporter/issues"
-  },
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "start": "tsdx watch --target node",
-    "build": "tsdx build --target node",
-    "test": "tsdx test .*.test.ts",
-    "lint": "tsdx lint",
-    "prepare": "tsdx build --target node",
-    "cypress": "cypress run --reporter ./dist/index.js"
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest ./tests/ --globals",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
-  },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
-  "module": "dist/cypress-circleci-reporter.esm.js",
   "devDependencies": {
-    "@babel/plugin-transform-modules-commonjs": "^7.27.1",
-    "@types/jest": "^25.2.3",
-    "@types/mocha": "^8.2.1",
-    "@types/xml": "^1.0.5",
+    "@types/node": "^24.10.1",
+    "@types/mocha": "^8.2.3",
+    "@types/xml": "^1.0.11",
     "cypress": "^4.12.1",
-    "husky": "^4.3.8",
-    "jest-date-mock": "^1.0.8",
-    "jest-xml-matcher": "^1.2.0",
-    "mocha": "^8.2.1",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.1.0",
-    "typescript": "^4.1.5"
+    "mocha": "^8.4.0",
+    "prettier": "^3.6.2",
+    "tsdown": "^0.16.5",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.10"
   },
   "dependencies": {
     "strip-ansi": "^7.1.2",

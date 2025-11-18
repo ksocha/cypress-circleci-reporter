@@ -1,10 +1,10 @@
-import { create } from 'xmlbuilder2';
-import Mocha, { Runner, Suite, Test, MochaOptions } from 'mocha';
-import createStatsCollector from 'mocha/lib/stats-collector';
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
-import stripAnsi from 'strip-ansi';
+import { create } from "xmlbuilder2";
+import Mocha, { Runner, Suite, Test, type MochaOptions } from "mocha";
+import createStatsCollector from "mocha/lib/stats-collector";
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
+import stripAnsi from "strip-ansi";
 
 const {
   EVENT_RUN_END,
@@ -16,10 +16,11 @@ const {
 
 // A subset of invalid characters as defined in http://www.w3.org/TR/xml/#charsets that can occur in e.g. stacktraces
 // regex lifted from https://github.com/MylesBorins/xml-sanitizer/ (licensed MIT)
-const INVALID_CHARACTERS_REGEX = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007f-\u0084\u0086-\u009f\uD800-\uDFFF\uFDD0-\uFDFF\uFFFF\uC008]/g; // eslint-disable-line no-control-regex, max-len
+const INVALID_CHARACTERS_REGEX =
+  /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007f-\u0084\u0086-\u009f\uD800-\uDFFF\uFDD0-\uFDFF\uFFFF\uC008]/g; // eslint-disable-line no-control-regex, max-len
 
 function removeInvalidCharacters(input: string) {
-  return input ? input.replace(INVALID_CHARACTERS_REGEX, '') : input;
+  return input ? input.replace(INVALID_CHARACTERS_REGEX, "") : input;
 }
 
 function getClassname(test: Test) {
@@ -31,11 +32,11 @@ function getClassname(test: Test) {
     }
     parent = parent.parent;
   }
-  return titles.join('.');
+  return titles.join(".");
 }
 
 class CypressCircleCIReporter extends Mocha.reporters.Base {
-  file = '';
+  file = "";
 
   constructor(runner: Runner, options?: MochaOptions) {
     super(runner, options);
@@ -43,71 +44,68 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
     createStatsCollector(runner);
     const projectPath: string | undefined = options?.reporterOptions?.project;
     const resultsDir: string =
-      options?.reporterOptions?.resultsDir || './test_results/cypress';
+      options?.reporterOptions?.resultsDir || "./test_results/cypress";
     const resultFileName: string =
-      options?.reporterOptions?.resultFileName || 'cypress-[hash]';
+      options?.reporterOptions?.resultFileName || "cypress-[hash]";
 
-    if (resultFileName.indexOf('[hash]') < 0) {
+    if (resultFileName.indexOf("[hash]") < 0) {
       throw new Error(`resultFileName must contain '[hash]'`);
     }
 
     const resultFilePath = path.join(resultsDir, `${resultFileName}.xml`);
 
-    const root = create({ version: '1.0', encoding: 'UTF-8' }).ele(
-      'testsuite',
+    const root = create({ version: "1.0", encoding: "UTF-8" }).ele(
+      "testsuite",
       {
-        name: 'cypress',
+        name: "cypress",
         timestamp: new Date().toISOString().slice(0, -5),
-      }
+      },
     );
 
     runner.on(EVENT_SUITE_BEGIN, (suite: Suite) => {
       if (suite.file) {
-        this.file = path.join(projectPath || '', suite.file);
+        this.file = path.join(projectPath || "", suite.file);
       }
     });
 
     runner.on(EVENT_TEST_PASS, (test: Test) => {
-      root.ele('testcase', this.getTestcaseAttributes(test));
+      root.ele("testcase", this.getTestcaseAttributes(test));
     });
 
     runner.on(EVENT_TEST_FAIL, (test: Test, err: any) => {
-      let message = '';
-      if (err.message && typeof err.message.toString === 'function') {
+      let message = "";
+      if (err.message && typeof err.message.toString === "function") {
         message = String(err.message);
-      } else if (typeof err.inspect === 'function') {
+      } else if (typeof err.inspect === "function") {
         message = String(err.inspect());
       }
 
       const failureMessage = err.stack || message;
 
       root
-        .ele('testcase', this.getTestcaseAttributes(test))
-        .ele('failure', {
-          message: removeInvalidCharacters(message) || '',
-          type: err.name || '',
+        .ele("testcase", this.getTestcaseAttributes(test))
+        .ele("failure", {
+          message: removeInvalidCharacters(message) || "",
+          type: err.name || "",
         })
         .ele({ $: removeInvalidCharacters(failureMessage) });
     });
 
     runner.on(EVENT_TEST_PENDING, (test: Test) => {
-      root.ele('testcase', this.getTestcaseAttributes(test));
+      root.ele("testcase", this.getTestcaseAttributes(test));
     });
 
     runner.on(EVENT_RUN_END, () => {
-      root.att('time', ((runner.stats?.duration || 0) / 1000).toFixed(4));
-      root.att('tests', String(runner.stats?.tests || 0));
-      root.att('failures', String(runner.stats?.failures || 0));
-      root.att('skipped', String(runner.stats?.pending || 0));
+      root.att("time", ((runner.stats?.duration || 0) / 1000).toFixed(4));
+      root.att("tests", String(runner.stats?.tests || 0));
+      root.att("failures", String(runner.stats?.failures || 0));
+      root.att("skipped", String(runner.stats?.pending || 0));
 
       const xmlText = root.end({ prettyPrint: true }).toString();
 
       const finalPath = resultFilePath.replace(
-        '[hash]',
-        crypto
-          .createHash('md5')
-          .update(xmlText)
-          .digest('hex')
+        "[hash]",
+        crypto.createHash("md5").update(xmlText).digest("hex"),
       );
 
       const finalPathDir = path.dirname(finalPath);
@@ -115,7 +113,7 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
       if (!fs.existsSync(finalPathDir)) {
         fs.mkdirSync(finalPathDir, { recursive: true });
       }
-      fs.writeFileSync(finalPath, xmlText, 'utf-8');
+      fs.writeFileSync(finalPath, xmlText, "utf-8");
     });
   }
 
@@ -124,7 +122,7 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
       name: stripAnsi(test.title),
       file: this.file,
       time:
-        typeof test.duration === 'undefined'
+        typeof test.duration === "undefined"
           ? 0
           : (test.duration / 1000).toFixed(4),
       classname: stripAnsi(getClassname(test)),
@@ -133,4 +131,3 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
 }
 
 export default CypressCircleCIReporter;
-module.exports = CypressCircleCIReporter;
