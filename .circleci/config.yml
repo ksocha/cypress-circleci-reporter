@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Run cypress tests
           command: |
-            pnpm cypress run --reporter "./dist/index.js" --spec "$(circleci tests glob "./cypress/integration/**/*.spec.js" | circleci tests split --split-by=timings | paste -sd "," -)"
+            pnpm cypress run --reporter "./dist/index.js" --spec "$(circleci tests glob "./cypress/e2e/**/*.cy.js" | circleci tests split --split-by=timings | paste -sd "," -)"
       - store_test_results:
           path: test_results
       - store_artifacts:
