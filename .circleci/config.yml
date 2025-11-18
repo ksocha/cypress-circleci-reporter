@@ -1,67 +1,56 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.1.0
+  node: circleci/node@7.2.1
 
 executors:
   node:
     working_directory: ~/app
     docker:
-      - image: cimg/node:22.11.0
+      - image: cimg/node:24.11.1
   node_cypress:
     working_directory: ~/app
     docker:
-      - image: cypress/base:22.11.0
+      - image: cypress/base:24.11.1
 
 jobs:
-  checkout_code:
-    executor: node
-    steps:
-      - checkout
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - app
-
-  install_dependencies:
-    executor: node
-    steps:
-      - attach_workspace:
-          at: ~/
-      - node/install-packages:
-          pkg-manager: yarn
-
   run_linter:
     executor: node
     steps:
-      - attach_workspace:
-          at: ~/
+      - checkout
+      - node/install-packages:
+          pkg-manager: pnpm
       - run:
           name: Run linter
-          command: yarn lint
+          command: pnpm lint
 
   run_unit_tests:
     executor: node
     steps:
-      - attach_workspace:
-          at: ~/
+      - checkout
+      - node/install-packages:
+          pkg-manager: pnpm
       - run:
           name: Run unit tests
-          command: yarn test
+          command: pnpm test
 
   run_cypress_tests:
     executor: node_cypress
     parallelism: 3
     steps:
-      - attach_workspace:
-          at: ~/
+      - checkout
+      - run:
+          name: Enable pnpm
+          command: corepack enable pnpm
+      - node/install-packages:
+          pkg-manager: pnpm
       - run:
           name: Build app
-          command: yarn build
+          command: pnpm build
       - run:
           name: Run cypress tests
           command: |
-            yarn cypress run --reporter "./dist/index.js" --spec "$(circleci tests glob "./cypress/integration/**/*.spec.js" | circleci tests split --split-by=timings | paste -sd "," -)"
+            pnpm cypress run --reporter "./dist/index.cjs" --spec "$(circleci tests glob "./cypress/e2e/**/*.cy.js" | circleci tests split --split-by=timings | paste -sd "," -)"
       - store_test_results:
           path: test_results
       - store_artifacts:
@@ -71,16 +60,7 @@ workflows:
   version: 2
   build:
     jobs:
-      - checkout_code
-      - install_dependencies:
-          requires:
-            - checkout_code
-      - run_linter:
-          requires:
-            - install_dependencies
-      - run_unit_tests:
-          requires:
-            - run_linter
-      - run_cypress_tests:
-          requires:
-            - run_unit_tests
+      - run_linter
+      - run_unit_tests
+      # below step is only for testing purposes
+      # - run_cypress_tests

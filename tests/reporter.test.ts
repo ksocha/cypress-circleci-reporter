@@ -1,10 +1,10 @@
-import 'jest-xml-matcher';
-import { advanceTo, advanceBy } from 'jest-date-mock';
-import { Suite, Test } from 'mocha';
-import fs from 'fs';
+import "jest-xml-matcher";
+import { advanceTo, advanceBy } from "jest-date-mock";
+import { Suite, Test } from "mocha";
+import fs from "fs";
 
-import RunnerMock from './RunnerMock';
-import CypressCircleCIReporter from '../src';
+import RunnerMock from "./RunnerMock";
+import CypressCircleCIReporter from "../src";
 
 function formatDuration(duration: number) {
   return (duration / 1000).toFixed(4);
@@ -14,7 +14,7 @@ function formatDate(date: Date) {
   return date.toISOString().slice(0, -5);
 }
 
-describe('reporter', () => {
+describe("reporter", () => {
   beforeEach(() => {
     const directory = `./test_results/cypress`;
     if (fs.existsSync(directory)) {
@@ -22,33 +22,33 @@ describe('reporter', () => {
     }
   });
 
-  it('creates proper xml for test run', () => {
+  it("creates proper xml for test run", () => {
     const startDate = new Date();
     const startDateISO = formatDate(startDate);
     advanceTo(startDate);
 
     const testDuration = 200;
-    const testFile = 'path/to/file.spec.ts';
+    const testFile = "path/to/file.spec.ts";
 
-    const test1 = new Test('test1');
+    const test1 = new Test("test1");
     test1.duration = 1200;
 
-    const test2 = new Test('test2');
+    const test2 = new Test("test2");
     test2.duration = 2500;
 
-    const test3 = new Test('test3');
+    const test3 = new Test("test3");
     test3.duration = 3500;
 
-    const test4 = new Test('test4');
+    const test4 = new Test("test4");
     test4.duration = 1500;
 
-    const test5 = new Test('test5');
+    const test5 = new Test("test5");
     test5.duration = 1200;
 
-    const nestedSuite = new Suite('nested');
+    const nestedSuite = new Suite("nested");
     nestedSuite.addTest(test5);
 
-    const suite = new Suite('root');
+    const suite = new Suite("root");
     suite.root = true;
     suite.file = testFile;
 
@@ -66,11 +66,11 @@ describe('reporter', () => {
 
     runnerMock.pass(test1);
     runnerMock.fail(test2, {
-      name: 'TestError',
-      message: 'some test message',
+      name: "TestError",
+      message: "some test message",
     });
     runnerMock.fail(test3, {
-      stack: 'some test stack',
+      stack: "some test stack",
     });
     runnerMock.pending(test4);
 
@@ -88,10 +88,10 @@ describe('reporter', () => {
     const test4DurationFormatted = formatDuration(test4.duration);
     const test5DurationFormatted = formatDuration(test5.duration);
 
-    const files = fs.readdirSync('./test_results/cypress');
+    const files = fs.readdirSync("./test_results/cypress");
     const actualXML = fs.readFileSync(
       `./test_results/cypress/${files[0]}`,
-      'utf-8'
+      "utf-8",
     );
     const expectedXML = `
       <?xml version="1.0" encoding="UTF-8"?>
@@ -114,18 +114,18 @@ describe('reporter', () => {
     expect(actualXML).toEqualXML(expectedXML);
   });
 
-  it('creates proper xml with project path passed', () => {
+  it("creates proper xml with project path passed", () => {
     const startDate = new Date();
     const startDateISO = formatDate(startDate);
     advanceTo(startDate);
 
     const testDuration = 200;
-    const testFile = 'path/to/file.spec.ts';
+    const testFile = "path/to/file.spec.ts";
 
-    const test1 = new Test('test1');
+    const test1 = new Test("test1");
     test1.duration = 1200;
 
-    const suite = new Suite('root');
+    const suite = new Suite("root");
     suite.root = true;
     suite.file = testFile;
 
@@ -133,7 +133,7 @@ describe('reporter', () => {
 
     const runnerMock = new RunnerMock(suite, false);
     new CypressCircleCIReporter(runnerMock, {
-      reporterOptions: { project: 'spec' },
+      reporterOptions: { project: "spec" },
     });
 
     runnerMock.start();
@@ -148,10 +148,10 @@ describe('reporter', () => {
     const testRunDurationFormatted = formatDuration(testDuration);
     const test1DurationFormatted = formatDuration(test1.duration);
 
-    const files = fs.readdirSync('./test_results/cypress');
+    const files = fs.readdirSync("./test_results/cypress");
     const actualXML = fs.readFileSync(
       `./test_results/cypress/${files[0]}`,
-      'utf-8'
+      "utf-8",
     );
     const expectedXML = `
       <?xml version="1.0" encoding="UTF-8"?>
@@ -163,16 +163,16 @@ describe('reporter', () => {
   });
 
   it(`throws error if 'resultFileName' does not contain '[hash]'`, () => {
-    const suite = new Suite('root');
+    const suite = new Suite("root");
     suite.root = true;
-    suite.file = 'path/to/file.spec.ts';
+    suite.file = "path/to/file.spec.ts";
 
     const runnerMock = new RunnerMock(suite, false);
 
     expect(() => {
       new CypressCircleCIReporter(runnerMock, {
         reporterOptions: {
-          resultFileName: 'cypress',
+          resultFileName: "cypress",
         },
       });
     }).toThrow();

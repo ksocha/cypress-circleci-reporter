@@ -34,7 +34,7 @@ run_cypress_tests:
 
     - run:
         name: Run cypress tests
-        command: yarn cypress run --spec "$(circleci tests glob "./cypress/integration/**/*.spec.js" | circleci tests split --split-by=timings | paste -sd "," -)" --reporter cypress-circleci-reporter
+        command: yarn cypress run --spec "$(circleci tests glob "./cypress/e2e/**/*.cy.js" | circleci tests split --split-by=timings | paste -sd "," -)" --reporter cypress-circleci-reporter
 
     - store_test_results:
         path: test_results

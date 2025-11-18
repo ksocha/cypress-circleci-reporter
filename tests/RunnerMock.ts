@@ -1,4 +1,4 @@
-import { Runner, Suite, Test } from 'mocha';
+import { Runner, Suite, Test } from "mocha";
 
 const {
   EVENT_RUN_BEGIN,
@@ -31,7 +31,7 @@ export default class RunnerMock extends Runner {
     this.endTest(test);
   };
 
-  fail = (test: Test, reason: any) => {
+  fail = (test: Test, reason: unknown) => {
     this.emit(EVENT_TEST_FAIL, test, reason);
     this.endTest(test);
   };
