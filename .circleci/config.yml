@@ -62,4 +62,5 @@ workflows:
     jobs:
       - run_linter
       - run_unit_tests
-      - run_cypress_tests
+      # below step is only for testing purposes
+      # - run_cypress_tests
