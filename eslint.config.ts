@@ -12,6 +12,7 @@ export default defineConfig([
       "node_modules",
       "tsdown.config.ts",
       "eslint.config.ts",
+      "cypress.config.ts",
     ],
   },
   {
