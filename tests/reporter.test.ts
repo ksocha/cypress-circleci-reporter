@@ -162,6 +162,86 @@ describe("reporter", () => {
     expect(actualXML).toEqualXML(expectedXML);
   });
 
+  it("outputs test results to stdout by default", () => {
+    const test1 = new Test("test1");
+    test1.duration = 1200;
+
+    const test2 = new Test("test2");
+    test2.duration = 2500;
+
+    const test3 = new Test("test3");
+    test3.duration = 1500;
+
+    const suite = new Suite("root");
+    suite.root = true;
+    suite.file = "path/to/file.spec.ts";
+    suite.addTest(test1);
+    suite.addTest(test2);
+    suite.addTest(test3);
+
+    const runnerMock = new RunnerMock(suite, false);
+    new CypressCircleCIReporter(runnerMock);
+
+    const captured: string[] = [];
+    const writeSpy = vi
+      .spyOn(process.stdout, "write")
+      .mockImplementation((s) => {
+        captured.push(String(s));
+        return true;
+      });
+
+    runnerMock.start();
+    runnerMock.startSuite(suite);
+    runnerMock.pass(test1);
+    runnerMock.fail(test2, { name: "TestError", message: "some error" });
+    runnerMock.pending(test3);
+    runnerMock.end();
+
+    writeSpy.mockRestore();
+
+    const output = captured.join("");
+    expect(output).toContain("root");
+    expect(output).toContain("✓ test1 (1200ms)");
+    expect(output).toContain("✗ test2 (2500ms)");
+    expect(output).toContain("some error");
+    expect(output).toContain("- test3 (pending)");
+    expect(output).toContain("1 passing, 1 failing, 1 pending");
+  });
+
+  it("suppresses console output when consoleOutput is false", () => {
+    const test1 = new Test("test1");
+    test1.duration = 1200;
+
+    const suite = new Suite("root");
+    suite.root = true;
+    suite.file = "path/to/file.spec.ts";
+    suite.addTest(test1);
+
+    const runnerMock = new RunnerMock(suite, false);
+    new CypressCircleCIReporter(runnerMock, {
+      reporterOptions: { consoleOutput: false },
+    });
+
+    const captured: string[] = [];
+    const writeSpy = vi
+      .spyOn(process.stdout, "write")
+      .mockImplementation((s) => {
+        captured.push(String(s));
+        return true;
+      });
+
+    runnerMock.start();
+    runnerMock.startSuite(suite);
+    runnerMock.pass(test1);
+    runnerMock.end();
+
+    writeSpy.mockRestore();
+
+    const output = captured.join("");
+    expect(output).not.toContain("✓");
+    expect(output).not.toContain("passing");
+  });
+
   it(`throws error if 'resultFileName' does not contain '[hash]'`, () => {
     const suite = new Suite("root");
     suite.root = true;

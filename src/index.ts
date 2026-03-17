@@ -47,6 +47,8 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
       options?.reporterOptions?.resultsDir || "./test_results/cypress";
     const resultFileName: string =
       options?.reporterOptions?.resultFileName || "cypress-[hash]";
+    const consoleOutput: boolean =
+      options?.reporterOptions?.consoleOutput !== false;
 
     if (resultFileName.indexOf("[hash]") < 0) {
       throw new Error(`resultFileName must contain '[hash]'`);
@@ -66,10 +68,16 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
       if (suite.file) {
         this.file = path.join(projectPath || "", suite.file);
       }
+      if (consoleOutput && suite.title) {
+        process.stdout.write(`\n  ${suite.title}\n`);
+      }
     });
 
     runner.on(EVENT_TEST_PASS, (test) => {
       root.ele("testcase", this.getTestcaseAttributes(test));
+      if (consoleOutput) {
+        process.stdout.write(`  ✓ ${stripAnsi(test.fullTitle())} (${test.duration || 0}ms)\n`);
+      }
     });
 
     runner.on(EVENT_TEST_FAIL, (test, err) => {
@@ -89,10 +97,17 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
           type: err.name || "",
         })
         .ele({ $: removeInvalidCharacters(failureMessage) });
+      if (consoleOutput) {
+        process.stdout.write(`  ✗ ${stripAnsi(test.fullTitle())} (${test.duration || 0}ms)\n`);
+        process.stdout.write(`      ${message}\n`);
+      }
     });
 
     runner.on(EVENT_TEST_PENDING, (test) => {
       root.ele("testcase", this.getTestcaseAttributes(test));
+      if (consoleOutput) {
+        process.stdout.write(`  - ${stripAnsi(test.fullTitle())} (pending)\n`);
+      }
     });
 
     runner.on(EVENT_RUN_END, () => {
@@ -100,6 +115,14 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
       root.att("tests", String(runner.stats?.tests || 0));
       root.att("failures", String(runner.stats?.failures || 0));
       root.att("skipped", String(runner.stats?.pending || 0));
+
+      if (consoleOutput) {
+        const passed = (runner.stats?.tests || 0) - (runner.stats?.failures || 0) - (runner.stats?.pending || 0);
+        const failed = runner.stats?.failures || 0;
+        const pending = runner.stats?.pending || 0;
+        const duration = ((runner.stats?.duration || 0) / 1000).toFixed(2);
+        process.stdout.write(`\n  ${passed} passing, ${failed} failing, ${pending} pending (${duration}s)\n\n`);
+      }
 
       const xmlText = root.end({ prettyPrint: true }).toString();
 
