@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "strip-ansi": "^7.1.2",
-    "xmlbuilder2": "^4.0.0"
+    "xmlbuilder2": "^3.1.1"
   },
   "peerDependencies": {
     "mocha": ">=7"
