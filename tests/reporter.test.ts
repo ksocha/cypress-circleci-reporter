@@ -18,7 +18,7 @@ describe("reporter", () => {
   beforeEach(() => {
     const directory = `./test_results/cypress`;
     if (fs.existsSync(directory)) {
-      fs.rmdirSync(directory, { recursive: true });
+      fs.rmSync(directory, { recursive: true });
     }
   });
 
