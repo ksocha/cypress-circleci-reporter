@@ -1,9 +1,9 @@
 import { create } from "xmlbuilder2";
 import Mocha, { Runner, Test, type MochaOptions } from "mocha";
 import createStatsCollector from "mocha/lib/stats-collector";
-import fs from "fs";
-import path from "path";
-import crypto from "crypto";
+import fs from "node:fs";
+import path from "node:path";
+import crypto from "node:crypto";
 import stripAnsi from "strip-ansi";
 
 const {
@@ -76,7 +76,9 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
     runner.on(EVENT_TEST_PASS, (test) => {
       root.ele("testcase", this.getTestcaseAttributes(test));
       if (consoleOutput) {
-        process.stdout.write(`  ✓ ${stripAnsi(test.fullTitle())} (${test.duration || 0}ms)\n`);
+        process.stdout.write(
+          `  ✓ ${stripAnsi(test.fullTitle())} (${test.duration || 0}ms)\n`,
+        );
       }
     });
 
@@ -98,7 +100,9 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
         })
         .ele({ $: removeInvalidCharacters(failureMessage) });
       if (consoleOutput) {
-        process.stdout.write(`  ✗ ${stripAnsi(test.fullTitle())} (${test.duration || 0}ms)\n`);
+        process.stdout.write(
+          `  ✗ ${stripAnsi(test.fullTitle())} (${test.duration || 0}ms)\n`,
+        );
         process.stdout.write(`      ${message}\n`);
       }
     });
@@ -117,11 +121,16 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
       root.att("skipped", String(runner.stats?.pending || 0));
 
       if (consoleOutput) {
-        const passed = (runner.stats?.tests || 0) - (runner.stats?.failures || 0) - (runner.stats?.pending || 0);
+        const passed =
+          (runner.stats?.tests || 0) -
+          (runner.stats?.failures || 0) -
+          (runner.stats?.pending || 0);
         const failed = runner.stats?.failures || 0;
         const pending = runner.stats?.pending || 0;
         const duration = ((runner.stats?.duration || 0) / 1000).toFixed(2);
-        process.stdout.write(`\n  ${passed} passing, ${failed} failing, ${pending} pending (${duration}s)\n\n`);
+        process.stdout.write(
+          `\n  ${passed} passing, ${failed} failing, ${pending} pending (${duration}s)\n\n`,
+        );
       }
 
       const xmlText = root.end({ prettyPrint: true }).toString();

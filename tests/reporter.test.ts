@@ -1,7 +1,7 @@
 import "jest-xml-matcher";
 import { advanceTo, advanceBy } from "jest-date-mock";
 import { Suite, Test } from "mocha";
-import fs from "fs";
+import fs from "node:fs";
 
 import RunnerMock from "./RunnerMock";
 import CypressCircleCIReporter from "../src";
@@ -18,7 +18,7 @@ describe("reporter", () => {
   beforeEach(() => {
     const directory = `./test_results/cypress`;
     if (fs.existsSync(directory)) {
-      fs.rmdirSync(directory, { recursive: true });
+      fs.rmSync(directory, { recursive: true });
     }
   });
 

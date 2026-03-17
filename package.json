@@ -23,14 +23,9 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    },
+    ".": "./dist/index.mjs",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -66,5 +61,8 @@
   },
   "peerDependencies": {
     "mocha": ">=7"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
