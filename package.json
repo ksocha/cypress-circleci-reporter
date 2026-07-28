@@ -1,6 +1,6 @@
 {
   "name": "@share911/cypress-circleci-reporter",
-  "version": "0.5.1",
+  "version": "0.5.3",
   "author": "Kamil Socha (https://github.com/ksocha)",
   "description": "Cypress test reporter for CircleCI",
   "type": "module",

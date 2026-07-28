@@ -8,6 +8,7 @@ import { stripVTControlCharacters as stripAnsi } from "node:util"
 
 const {
   EVENT_RUN_END,
+  EVENT_TEST_BEGIN,
   EVENT_TEST_FAIL,
   EVENT_TEST_PASS,
   EVENT_TEST_PENDING,
@@ -37,6 +38,8 @@ function getClassname(test: Test) {
 
 class CypressCircleCIReporter extends Mocha.reporters.Base {
   file = "";
+
+  private testStartedAt = Date.now();
 
   constructor(runner: Runner, options?: MochaOptions) {
     super(runner, options);
@@ -71,6 +74,10 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
       if (consoleOutput && suite.title) {
         process.stdout.write(`\n  ${suite.title}\n`);
       }
+    });
+
+    runner.on(EVENT_TEST_BEGIN, () => {
+      this.testStartedAt = Date.now();
     });
 
     runner.on(EVENT_TEST_PASS, (test) => {
@@ -141,13 +148,18 @@ class CypressCircleCIReporter extends Mocha.reporters.Base {
   }
 
   private getTestcaseAttributes = (test: Test) => {
+    // Cypress reports no duration for some failures (e.g. command timeouts).
+    // Recording 0 makes CircleCI's timing-based test splitting treat those
+    // specs as free and stack them all on one container, so fall back to wall
+    // time measured since the test began (or the previous test ended).
+    const seconds = test.duration
+      ? test.duration / 1000
+      : (Date.now() - this.testStartedAt) / 1000;
+    this.testStartedAt = Date.now();
     return {
       name: stripAnsi(test.title),
       file: this.file,
-      time:
-        typeof test.duration === "undefined"
-          ? 0
-          : (test.duration / 1000).toFixed(4),
+      time: seconds.toFixed(4),
       classname: stripAnsi(getClassname(test)),
     };
   };

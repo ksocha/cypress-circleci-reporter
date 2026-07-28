@@ -3,6 +3,7 @@ import { Runner, Suite, Test } from "mocha";
 const {
   EVENT_RUN_BEGIN,
   EVENT_RUN_END,
+  EVENT_TEST_BEGIN,
   EVENT_TEST_FAIL,
   EVENT_TEST_PASS,
   EVENT_TEST_PENDING,
@@ -24,6 +25,10 @@ export default class RunnerMock extends Runner {
     suite.tests = suite.tests || [];
 
     this.emit(EVENT_SUITE_BEGIN, suite);
+  };
+
+  startTest = (test: Test) => {
+    this.emit(EVENT_TEST_BEGIN, test);
   };
 
   pass = (test: Test) => {
