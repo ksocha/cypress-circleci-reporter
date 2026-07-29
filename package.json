@@ -1,6 +1,6 @@
 {
-  "name": "cypress-circleci-reporter",
-  "version": "0.5.0",
+  "name": "@share911/cypress-circleci-reporter",
+  "version": "0.5.3",
   "author": "Kamil Socha (https://github.com/ksocha)",
   "description": "Cypress test reporter for CircleCI",
   "type": "module",
@@ -8,7 +8,7 @@
   "homepage": "https://github.com/author/library#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ksocha/cypress-circleci-reporter.git"
+    "url": "git+https://github.com/Share911/cypress-circleci-reporter.git"
   },
   "bugs": {
     "url": "https://github.com/ksocha/cypress-circleci-reporter/issues"
@@ -61,7 +61,6 @@
     "vitest": "^4.1.0"
   },
   "dependencies": {
-    "strip-ansi": "^6.0.1",
     "xmlbuilder2": "^4.0.3"
   },
   "peerDependencies": {

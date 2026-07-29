@@ -5,3 +5,4 @@ dist
 test_results
 cypress/screenshots
 cypress/videos
+*.swp

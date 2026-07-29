@@ -162,6 +162,96 @@ describe("reporter", () => {
     expect(actualXML).toEqualXML(expectedXML);
   });
 
+  it("records measured wall time for a test without a duration", () => {
+    const startDate = new Date();
+    const startDateISO = formatDate(startDate);
+    advanceTo(startDate);
+
+    const testFile = "path/to/file.spec.ts";
+    const elapsed = 64000;
+
+    // A test that fails without a duration, as Cypress reports command timeouts
+    const test1 = new Test("times out");
+
+    const suite = new Suite("root");
+    suite.root = true;
+    suite.file = testFile;
+    suite.addTest(test1);
+
+    const runnerMock = new RunnerMock(suite, false);
+    new CypressCircleCIReporter(runnerMock, {
+      reporterOptions: { consoleOutput: false },
+    });
+
+    runnerMock.start();
+    runnerMock.startSuite(suite);
+
+    runnerMock.startTest(test1);
+    advanceBy(elapsed);
+    runnerMock.fail(test1, {
+      name: "CypressError",
+      message: "Timed out retrying after 60000ms",
+    });
+
+    runnerMock.end();
+
+    const files = fs.readdirSync("./test_results/cypress");
+    const actualXML = fs.readFileSync(
+      `./test_results/cypress/${files[0]}`,
+      "utf-8",
+    );
+    const expectedXML = `
+      <?xml version="1.0" encoding="UTF-8"?>
+      <testsuite name="cypress" timestamp="${startDateISO}" time="${formatDuration(elapsed)}" tests="1" failures="1" skipped="0">
+        <testcase name="${test1.title}" file="${testFile}" time="${formatDuration(elapsed)}" classname="root">
+          <failure message="Timed out retrying after 60000ms" type="CypressError">
+            <![CDATA[Timed out retrying after 60000ms]]>
+          </failure>
+        </testcase>
+      </testsuite>`;
+
+    expect(actualXML).toEqualXML(expectedXML);
+  });
+
+  it("measures from the previous test's end when the runner emits no test-begin events", () => {
+    advanceTo(new Date());
+
+    const testFile = "path/to/file.spec.ts";
+
+    const test1 = new Test("first timeout");
+    const test2 = new Test("second timeout");
+
+    const suite = new Suite("root");
+    suite.root = true;
+    suite.file = testFile;
+    suite.addTest(test1);
+    suite.addTest(test2);
+
+    const runnerMock = new RunnerMock(suite, false);
+    new CypressCircleCIReporter(runnerMock, {
+      reporterOptions: { consoleOutput: false },
+    });
+
+    runnerMock.start();
+    runnerMock.startSuite(suite);
+
+    advanceBy(30000);
+    runnerMock.fail(test1, { name: "CypressError", message: "timeout 1" });
+    advanceBy(45000);
+    runnerMock.fail(test2, { name: "CypressError", message: "timeout 2" });
+
+    runnerMock.end();
+
+    const files = fs.readdirSync("./test_results/cypress");
+    const actualXML = fs.readFileSync(
+      `./test_results/cypress/${files[0]}`,
+      "utf-8",
+    );
+
+    expect(actualXML).toContain(`name="first timeout" file="${testFile}" time="${formatDuration(30000)}"`);
+    expect(actualXML).toContain(`name="second timeout" file="${testFile}" time="${formatDuration(45000)}"`);
+  });
+
   it("outputs test results to stdout by default", () => {
     const test1 = new Test("test1");
     test1.duration = 1200;
